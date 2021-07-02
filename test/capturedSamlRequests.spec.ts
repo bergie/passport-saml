@@ -893,8 +893,15 @@ export const logoutChecks: CapturedCheck[] = [
             "samlp:StatusCode": [
               {
                 $: {
-                  Value: "urn:oasis:names:tc:SAML:2.0:status:Success",
+                  Value: "urn:oasis:names:tc:SAML:2.0:status:Requester",
                 },
+                "samlp:StatusCode": [
+                  {
+                    $: {
+                      Value: "urn:oasis:names:tc:SAML:2.0:status:UnknownPrincipal",
+                    },
+                  },
+                ],
               },
             ],
           },
@@ -918,7 +925,7 @@ describe("captured SAML requests /", function () {
         config.entryPoint = "https://wwwexampleIdp.com/saml";
         let profile: Profile;
         const strategy = new SamlStrategy(config, function (
-          _profile: Profile | null | undefined,
+          _profile: Profile | null,
           done: VerifiedCallback
         ) {
           if (_profile) {
@@ -1023,7 +1030,7 @@ describe("captured SAML requests /", function () {
       config.entryPoint = "https://wwwexampleIdp.com/saml";
       let profile: Profile;
       const strategy = new SamlStrategy(config, function (
-        _profile: Profile | null | undefined,
+        _profile: Profile | null,
         done: VerifiedCallback
       ) {
         if (_profile) {
@@ -1034,13 +1041,7 @@ describe("captured SAML requests /", function () {
 
       passport.use(strategy);
 
-      let userSerialized = false;
-      passport.serializeUser(function (user, done) {
-        userSerialized = true;
-        done(null, user);
-      });
-
-      app.post("/login", passport.authenticate("saml"), function (req, res) {
+      app.post("/logout", passport.authenticate("saml"), function (req, res) {
         res.status(200).send("200 OK");
       });
 
@@ -1058,7 +1059,7 @@ describe("captured SAML requests /", function () {
 
       server = app.listen(3033, function () {
         const requestOpts = {
-          url: "http://localhost:3033/login",
+          url: "http://localhost:3033/logout",
           method: "post",
           form: check.samlRequest,
         };

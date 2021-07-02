@@ -110,10 +110,7 @@ describe("captured saml responses /", function () {
       config.callbackUrl = "http://localhost:3033/login";
       let profile: Profile;
       pp.use(
-        new SamlStrategy(config, function (
-          _profile: Profile | null | undefined,
-          done: VerifiedCallback
-        ): void {
+        new SamlStrategy(config, function (_profile: Profile | null, done: VerifiedCallback): void {
           if (_profile) {
             profile = _profile;
             done(null, { id: profile.nameID });
@@ -180,7 +177,7 @@ describe("captured saml responses /", function () {
       pp.use(
         new SamlStrategy(config, function (
           req: express.Request,
-          _profile: Profile | null | undefined,
+          _profile: Profile | null,
           done: VerifiedCallback
         ) {
           if (_profile) {
