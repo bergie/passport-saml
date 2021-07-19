@@ -26,7 +26,7 @@
     "Chris Barth",
     "Andrii Kostenko"
   ],
-  "main": "./lib/passport-saml",
+  "main": "./lib",
   "files": [
     "lib",
     "README.md",
